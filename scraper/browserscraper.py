@@ -65,6 +65,7 @@ def scrape_healthnet(zipcode, year, plan, specialty):
             provider = providers.nth(i)
             print(f"Provider {i}:")
             print((provider.inner_text()))
+            results.append(provider.inner_text())
 
         browser.close()
 
