@@ -6,6 +6,8 @@ Find a provider by zip code, specialty and insurance plan.
 - `server.js` — Express API (port 5001), `POST /api/search` runs `script.py`
 - `script.py` — runs the scraper for the chosen source and prints JSON
 - `scraper/` — Health Net scraper (Playwright) and result parser
+- `retell/` — Retell voice agent that phones a provider's office to check insurance and open
+  appointments (`POST /api/calls`, `GET /api/calls/:id`)
 
 ## Run
 
@@ -19,6 +21,26 @@ both. Use `PORT=5002 ./run.sh` if 5001 is taken.
 
 If no Python with SSL support is found, install one (`brew install python`) or point the
 script at one with `PYTHON_BOOTSTRAP=/path/to/python3 ./run.sh`.
+
+## Calling provider offices (Retell)
+
+Each search result has a **Call office** button. A Retell AI agent phones the office, asks
+whether they take the patient's insurance and are accepting new patients, and asks for open
+appointment times. When the call ends, the answers, a summary and the transcript appear on the
+card.
+
+One-time setup:
+
+1. `cp .env.example .env`, then set `RETELL_API_KEY` to your key.
+2. Buy a phone number in the Retell dashboard (Phone Numbers > Buy). Outbound calls need one.
+3. Set `RETELL_TEST_TO_NUMBER=+1<your cell>` in `.env` while testing. Every call then rings you
+   instead of the real office, so you can play the receptionist. Clear it to call real offices.
+4. `npm run retell:setup` creates the agent and saves `RETELL_LLM_ID`, `RETELL_AGENT_ID` and
+   `RETELL_FROM_NUMBER` to `.env`.
+5. Restart `./run.sh`.
+
+To change what the agent says or which answers it extracts, edit `retell/agentConfig.js` and
+run `npm run retell:setup` again. That updates the existing agent.
 
 ## Adding a search source
 

@@ -167,3 +167,75 @@
   border-color: #c62828;
   color: #c62828;
 }
+
+.call {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.call-button {
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.call-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.call-hint {
+  font-size: 13px;
+}
+
+.call-result {
+  margin-top: 8px;
+}
+
+.call-status,
+.call-label {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.slots {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
+.summary {
+  font-size: 14px;
+}
+
+.transcript {
+  white-space: pre-wrap;
+  font-size: 13px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.mode-banner {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.mode-banner.test {
+  color: #2e7d32;
+  border-color: #2e7d32;
+}
+
+.mode-banner.live {
+  color: #c62828;
+  border-color: #c62828;
+}
