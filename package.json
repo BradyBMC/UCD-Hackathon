@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "server": "node server.js",
-    "dev": "npm --prefix frontend run dev"
+    "dev": "npm --prefix frontend run dev",
+    "retell:setup": "node retell/setup.js"
   },
   "repository": {
     "type": "git",

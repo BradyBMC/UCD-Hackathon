@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
+import CallOffice, { type CallConfig } from './CallOffice';
 import './App.css';
 
 const PLANS = ['Medi-Cal'] as const;
@@ -38,6 +39,14 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [requestError, setRequestError] = useState('');
   const [result, setResult] = useState<SearchResponse | null>(null);
+  const [callConfig, setCallConfig] = useState<CallConfig | null>(null);
+
+  useEffect(() => {
+    fetch('/api/calls/config')
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setCallConfig)
+      .catch(() => setCallConfig(null));
+  }, []);
 
   const validate = (): FieldErrors => {
     const next: FieldErrors = {};
@@ -77,6 +86,16 @@ function App() {
         <h1>Find a provider near you</h1>
         <p>Tell us where you are, what kind of care you need, and your insurance plan.</p>
       </header>
+
+      {callConfig?.enabled && (
+        <p className={callConfig.test_mode ? 'mode-banner test' : 'mode-banner live'}>
+          {!callConfig.test_mode
+            ? 'Live mode: "Call office" phones the real provider office.'
+            : callConfig.test_number
+              ? `Test mode: every call goes to ${callConfig.test_number}, not the office.`
+              : 'Test mode: RETELL_TEST_TO_NUMBER is invalid, so calls are blocked.'}
+        </p>
+      )}
 
       <form className="card" onSubmit={handleSubmit} noValidate>
         <div className="field">
@@ -176,6 +195,12 @@ function App() {
                     {note}
                   </p>
                 ))}
+                <CallOffice
+                  provider={p}
+                  plan={result.params.plan}
+                  specialty={result.params.specialty}
+                  config={callConfig}
+                />
               </li>
             ))}
           </ul>
