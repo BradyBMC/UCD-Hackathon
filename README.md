@@ -7,31 +7,18 @@ Find a provider by zip code, specialty and insurance plan.
 - `script.py` — runs the scraper for the chosen source and prints JSON
 - `scraper/` — Health Net scraper (Playwright) and result parser
 
-## Setup (once, and after pulling new packages)
-
-```bash
-npm install && npm --prefix frontend install
-pip install -r requirements.txt
-playwright install chromium
-```
-
 ## Run
 
-Terminal 1 (backend):
-
 ```bash
-npm run server
+./run.sh
 ```
 
-Terminal 2 (frontend):
+This sets up anything missing (a `.venv` with Playwright and its Chromium, and the npm
+packages), then starts the API (port 5001) and the frontend (port 5173) together. Ctrl-C stops
+both. Use `PORT=5002 ./run.sh` if 5001 is taken.
 
-```bash
-npm run dev
-```
-
-Open http://localhost:5173. Set `PYTHON=/path/to/python` before `npm run server` if `python3`
-isn't the Python with Playwright installed. Set `API_URL` before `npm run dev` if the API isn't
-on port 5001.
+If no Python with SSL support is found, install one (`brew install python`) or point the
+script at one with `PYTHON_BOOTSTRAP=/path/to/python3 ./run.sh`.
 
 ## Adding a search source
 
