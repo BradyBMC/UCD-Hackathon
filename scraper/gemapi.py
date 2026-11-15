@@ -1,4 +1,5 @@
 from google import genai
+from browserscraper import scrape_healthnet
 import time
 
 # parameters that need to be filled
@@ -6,7 +7,7 @@ website = None
 specialization = None
 insurance = None
 
-client = genai.Client(api_key="AQ.Ab8RN6JiMGbZPGBLSxC0uaotMBNtFVqCXIOtjPEUHEHNw-ARCw")
+client = genai.Client(api_key="AQ.Ab8RN6J3Yezb6sjl3rsUHsp4tSqKqDV3nHTr6GUTRY-4IdPMxA")
 
 def interpret_provider(text):
 
@@ -41,11 +42,21 @@ def interpret_provider(text):
 
     return response.text
 
+zip = "95811"
+year = "2026"
+plan = "Medi-Cal"
+specialty = "Primary Care"
+
+print(f"Starting program")
 start = time.time()
+data = scrape_healthnet(zip, year, plan, specialty)
+end = time.time()
+print(data)
+print(f"Scraping time taken: {end - start}")
 
-text = None
-
-print(interpret_provider(text))
+start = time.time()
+print(f"Requesting processing by API")
+print(interpret_provider(data))
 
 end = time.time()
-print(f"Time taken: {end - start}")
+print(f"API time taken: {end - start}")
