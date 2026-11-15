@@ -3,10 +3,28 @@ import './App.css';
 
 const PLANS = ['Medi-Cal'] as const;
 
+// Where provider data is scraped from. `id` must match SOURCES in server.js / script.py.
+const SOURCES = [{ id: 'healthnet', label: 'Health Net California' }] as const;
+
+type Provider = {
+  name: string | null;
+  organization: string | null;
+  specialty: string | null;
+  address: string | null;
+  distance_miles: number | null;
+  phone: string | null;
+  accepting_new_patients: boolean | null;
+  primary_care_provider: boolean | null;
+  virtual_visits: boolean | null;
+  notes: string[];
+  last_verified: string | null;
+};
+
 type SearchResponse = {
   status: string;
   message: string;
-  params: { zip: string; specialty: string; plan: string };
+  params: { zip: string; specialty: string; plan: string; source: string };
+  providers: Provider[];
 };
 
 type FieldErrors = { zip?: string; specialty?: string };
@@ -15,6 +33,7 @@ function App() {
   const [zip, setZip] = useState('');
   const [specialty, setSpecialty] = useState('');
   const [plan, setPlan] = useState<string>(PLANS[0]);
+  const [source, setSource] = useState<string>(SOURCES[0].id);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
   const [requestError, setRequestError] = useState('');
@@ -40,7 +59,7 @@ function App() {
       const res = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ zip, specialty: specialty.trim(), plan }),
+        body: JSON.stringify({ zip, specialty: specialty.trim(), plan, source }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -101,24 +120,65 @@ function App() {
           </select>
         </div>
 
+        <div className="field">
+          <label htmlFor="source">Search source</label>
+          <select id="source" value={source} onChange={(e) => setSource(e.target.value)}>
+            {SOURCES.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <button type="submit" className="submit" disabled={loading}>
-          {loading ? 'Searching…' : 'Search providers'}
+          {loading ? 'Searching… (this can take a minute)' : 'Search providers'}
         </button>
       </form>
 
       {requestError && <p className="card request-error">{requestError}</p>}
 
       {result && (
-        <section className="card results" aria-live="polite">
+        <section className="results" aria-live="polite">
           <h2>{result.message}</h2>
-          <dl>
-            <dt>Zip code</dt>
-            <dd>{result.params.zip}</dd>
-            <dt>Specialty</dt>
-            <dd>{result.params.specialty}</dd>
-            <dt>Insurance plan</dt>
-            <dd>{result.params.plan}</dd>
-          </dl>
+          <p className="results-meta">
+            {result.params.specialty} near {result.params.zip} · {result.params.plan} ·{' '}
+            {SOURCES.find((s) => s.id === result.params.source)?.label ?? result.params.source}
+          </p>
+          <ul className="provider-list">
+            {result.providers.map((p, i) => (
+              <li key={`${p.name}-${p.address}-${i}`} className="card provider">
+                <div className="provider-head">
+                  <h3>{p.name ?? 'Unknown provider'}</h3>
+                  {p.distance_miles != null && <span className="distance">{p.distance_miles} mi</span>}
+                </div>
+                {p.specialty && <p className="specialty">{p.specialty}</p>}
+                {p.organization && p.organization.toLowerCase() !== p.name?.toLowerCase() && (
+                  <p className="org">{p.organization}</p>
+                )}
+                {p.address && <p>{p.address}</p>}
+                {p.phone && (
+                  <p>
+                    <a href={`tel:${p.phone.replace(/[^\d+]/g, '')}`}>{p.phone}</a>
+                  </p>
+                )}
+                <div className="tags">
+                  {p.accepting_new_patients != null && (
+                    <span className={p.accepting_new_patients ? 'tag yes' : 'tag no'}>
+                      {p.accepting_new_patients ? 'Accepting new patients' : 'Not accepting new patients'}
+                    </span>
+                  )}
+                  {p.primary_care_provider && <span className="tag">Primary care provider</span>}
+                  {p.virtual_visits && <span className="tag">Virtual visits</span>}
+                </div>
+                {p.notes.map((note) => (
+                  <p key={note} className="note">
+                    {note}
+                  </p>
+                ))}
+              </li>
+            ))}
+          </ul>
         </section>
       )}
     </main>

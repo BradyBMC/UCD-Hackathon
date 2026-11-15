@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 5001;
 const PYTHON = process.env.PYTHON || 'python3';
 const SCRIPT = path.join(__dirname, 'script.py');
 const PLANS = ['Medi-Cal'];
+const SOURCES = ['healthnet'];
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
@@ -35,9 +36,9 @@ function runPython(args) {
   });
 }
 
-// POST /api/search  { zip, specialty, plan }
+// POST /api/search  { zip, specialty, plan, source }
 app.post('/api/search', async (req, res) => {
-  const { zip, specialty, plan } = req.body ?? {};
+  const { zip, specialty, plan, source } = req.body ?? {};
 
   if (typeof zip !== 'string' || !/^\d{5}$/.test(zip)) {
     return res.status(400).json({ error: 'zip must be a 5-digit zip code.' });
@@ -48,9 +49,12 @@ app.post('/api/search', async (req, res) => {
   if (!PLANS.includes(plan)) {
     return res.status(400).json({ error: `plan must be one of: ${PLANS.join(', ')}.` });
   }
+  if (!SOURCES.includes(source)) {
+    return res.status(400).json({ error: `source must be one of: ${SOURCES.join(', ')}.` });
+  }
 
   try {
-    const result = await runPython([zip, specialty.trim(), plan]);
+    const result = await runPython([zip, specialty.trim(), plan, source]);
     res.json(result);
   } catch (err) {
     console.error(err);

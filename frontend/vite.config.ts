@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     // Forward /api requests to the Express backend (../server.js)
     proxy: {
-      '/api': 'http://localhost:5001',
+      '/api': process.env.API_URL ?? 'http://localhost:5001',
     },
   },
 })
