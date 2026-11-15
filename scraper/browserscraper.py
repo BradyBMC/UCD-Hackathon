@@ -1,6 +1,12 @@
 from playwright.sync_api import sync_playwright
 import time
 
+zip = "95811"
+year = "2026"
+plan = "Medi-Cal"
+specialty = "Primary Care"
+
+
 def scrape_healthnet(zipcode, year, plan, specialty):
 
     with sync_playwright() as p:
@@ -66,7 +72,7 @@ def scrape_healthnet(zipcode, year, plan, specialty):
 
 print(f"Starting program")
 start = time.time()
-data = scrape_healthnet("95811", "2026", "Medi-Cal", "Primary Care")
+data = scrape_healthnet(zip, plan, year, specialty)
 end = time.time()
 print(data)
 print(f"Time: {end - start}")
