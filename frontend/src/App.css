@@ -1,0 +1,106 @@
+.page {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.intro h1 {
+  font-size: 40px;
+  letter-spacing: -1px;
+  margin: 0 0 8px;
+}
+
+.intro p {
+  margin-bottom: 24px;
+}
+
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.field input[aria-invalid='true'] {
+  border-color: #c62828;
+}
+
+.error {
+  min-height: 1.3em;
+  margin-top: 4px;
+  font-size: 14px;
+  color: #c62828;
+}
+
+.submit {
+  width: 100%;
+  padding: 12px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.request-error {
+  margin-top: 16px;
+  color: #c62828;
+}
+
+.results {
+  margin-top: 24px;
+}
+
+.results dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.results dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-h);
+}
